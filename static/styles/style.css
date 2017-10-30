@@ -1,0 +1,201 @@
+.outer-container {
+    max-width: 700px;
+	border: 100px;
+	margin: auto;
+	background-color: #dae1ed;
+    border-radius: 4px;
+}
+
+.top-bar{
+	display: flex;
+    width:95%;
+    margin: auto;
+}
+
+.footer{
+    height: 15px;
+}
+.inner-container {
+    width: 100%;
+    height: 100%;
+}
+
+.user-bar {
+    width: 100%;
+    height: 1.3em;
+}
+
+.book-container {
+	max-width: 100%;
+	border-style: solid;
+	border-width: 1px;
+	border-color: darkmagenta;
+	background-color: darkseagreen;
+}
+
+.main-content-container{
+    border-top-color: #b671ff;
+    overflow: scroll;
+    width: 95%;
+    margin: auto;
+    padding: 3px;
+    height: 100%;
+    border-top-width: 22px;
+}
+
+.top-button-container {
+	display: flex;
+	flex-wrap: wrap;
+	width: 95%;
+    margin: auto;
+	border: 1px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: maroon;
+
+}
+
+.top-button {
+	max-width: 100%;
+	padding: 5px;
+	border: 5px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: darkmagenta;
+}
+
+.book-title-top-container {
+	width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    padding-bottom: 4px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: sandybrown;
+	text-align: center;
+    background-color: silver;
+
+}
+
+.book-buttons{
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: 0;
+    padding-right: 4px;
+}
+
+.book-title {
+    margin-left: auto;
+	align-content: center;
+}
+
+.book-content-main {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-left: 3px;
+
+}
+
+.user-side-container {
+    max-width: 20%;
+    margin-right: 0;
+    width: auto;
+	order: 2;
+	margin-left: auto;
+}
+
+.content-side-container {
+    width: auto;
+    position: relative;
+    float: left;
+	order: 1;
+    margin-right: 3px;
+
+
+}
+
+.holdings{
+    border-style: solid;
+    border-color: sandybrown;
+	padding: 5px;
+	border-width: 5px;
+	border-radius: 5px;
+}
+
+.holding-title {
+    border-style: solid;
+    border-color: sandybrown;
+
+}
+
+.holdings-container {
+    border-color: aqua;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.book-ISBN, .book-Author, .book-publisher, .book-Date,
+.book-edition, .book-id {
+    display: flex;
+
+}
+
+.isbn-tag, .book-author-tag, .book-publisher-tag, .book-date-tag, .book-edition-tag,
+.book-id-tag {
+    border-right-width: 30px;
+    border-color: skyblue;
+    padding-right: 10px;
+}
+
+.book-isbn-text {
+    border-left: 10px;
+}
+
+.image-banner{
+    width: 95%;
+    overflow: hidden;
+    margin: auto;
+}
+
+.image-banner img{
+    width: 100%;
+    height: 100px;
+}
+
+.login-content-container{
+    align-content: center;
+
+}
+
+
+.local-login-container, .g-signin-container{
+    width: 50%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-style: solid;
+    border-color: coral;
+    padding: 4px;
+}
+
+.g-signin-container{
+    align-content: center;
+}
+
+.login-title{
+    margin-bottom: 2px;
+}
+
+.book-add-form{
+    width: 50%;
+    margin: auto;
+}
+
+.book-add-title{
+    text-align: center;
+}
+
+.book-input{
+    margin-bottom: 5px;
+}
