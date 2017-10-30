@@ -1,0 +1,11 @@
+    {{ holding.book.title }}
+    {{ holding.book.isbn }}
+    {{ holding.book.user.username }}
+
+    {{ holding.user.username }}
+    <form action="{{ url_for('edit_holding', holding_id_num=holding.id) }}" method="POST">
+        <input type="text" name="holding_type" value={{ holding.holding_type }}>
+        <input type="text" name="holding_notes" value={{ holding.holding_notes }}>
+        <input name="edit_del_submit" type="submit" value="Edit">
+        <input name="edit_del_submit" type="submit" value="Delete">
+    </form>

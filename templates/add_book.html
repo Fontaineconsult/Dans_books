@@ -1,0 +1,20 @@
+{% extends 'container.html' %}
+{% block top_interface %}
+<div class="book-add-container">
+	<div class="book-add-title">
+		<span>Add a book</span>
+	</div>
+	<form method="post" class="book-add-form">
+		<input class="book-input" type="text" name="title" placeholder="Title" >
+		<input class="book-input" type="text" name="ISBN" placeholder="ISBN">
+		<input class="book-input" type="text" name="author" placeholder="Author">
+		<input class="book-input" type="text" name="publisher" placeholder="Publisher">
+		<input class="book-input" type="text" name="edition" placeholder="Edition">
+		<input class="book-input" type="text" name="date" placeholder="Date">
+		<input name="Submit" type="submit"/>
+	</form>
+	<form action="{{url_for('mainpage')}}" class="book-add-form">
+		<input type="submit" value="Cancel" />
+	</form>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'container.html' %}
+{% block top_interface %}
+
+{{ pagination.info }}
+{{ pagination.links }}
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>ISBN</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Date</th>
+            <th>Edition</th>
+            <th>User</th>
+            <th>Image</th>
+            <th>Holding</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for item in books %}
+
+<tr>
+    <td>{{ loop.index }}</td>
+    <td><a href={{ url_for('view_book', id_num=item.id) }}> {{item.title}} </a></td>
+    <td>{{ item.isbn }}</td>
+    <td>{{ item.author }}</td>
+    <td>{{ item.publisher }}</td>
+    <td>{{ item.date }}</td>
+    <td>{{ item.edition }}</td>
+    <td>{{ item.user.username }}</td>
+    <td><img src={{ item.user.picture }} width="50" height="50"></td>
+    {% set stringcat = [] %}
+    {% for holding in item.holdings %}
+    {% do stringcat.append(holding.holding_type) %}
+    {% endfor %}
+    <td>{{ stringcat|join(", ") }}</td>
+</tr>
+
+{% endfor %}
+</tr>
+    </tbody>
+</tbody>
+</thead>
+
+</table>
+{{ pagination.links }}
+{% endblock %}

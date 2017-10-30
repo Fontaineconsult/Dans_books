@@ -1,0 +1,8 @@
+{% extends 'container.html' %}
+{% block top_interface %}
+<form method="GET" action="{{ url_for('pagified_items') }}">
+    <input name="search_title" type="text">
+    <input name="search_isbn" type="text">
+    <input type="submit" name="Search" value="SEARCH!">
+</form>
+{% endblock %}

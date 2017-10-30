@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css')}}">
+    {% block login_head %}
+    {% endblock %}
+    <title>Dans Books</title>
+</head>
+<body>
+    <main class="outer-container">
+        <div class="top-bar">
+            <div class="user-bar">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                {% else %}
+                    {% if username %}
+                    Welcome, {{ username }}
+                    {% else %}
+                    You are not logged in
+                    {% endif %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div class="login-container">
+                {% if username %}
+                    {% if username == 'Home' %}
+                        <a href="{{ url_for('mainpage') }}">Home</a>
+                    {% else %}
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('showLogin')}}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class = "inner-container">
+            {% block top_interface %}
+            {% endblock %}
+        </div>
+        <div class ="footer">
+            Thanks!
+        </div>
+    </main>
+</body>
+{% block script %}
+{% endblock %}
+</html>

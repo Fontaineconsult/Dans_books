@@ -1,0 +1,22 @@
+{% extends "container.html" %}
+{% block top_interface %}
+Add User
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+{% for message in messages %}
+<li><strong> {{ message }} </strong></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<div class="user-add">
+	<form method="post">
+		<input type="text" name="username" placeholder="username" >
+		<input type="text" name="password" placeholder="password">
+		<input type="text" name="email" placeholder="email">
+		<input name="Submit" type="submit"/>
+	</form>
+	<br>
+</div>
+{% endblock %}

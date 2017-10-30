@@ -1,0 +1,97 @@
+<div class="book-container">
+    <div class="book-title-top-container">
+        <div class="book-title">{{ item.title }}</div>
+        <div class="book-buttons">
+            {% if item.user.username == username %}
+            <a href={{ url_for('edit_book',  id_num=item.id) }}>edit</a>
+            <a href={{ url_for('delete_book',  id_num=item.id) }}>delete</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="book-content-main">
+        <div class="content-side-container">
+            <div class="content-top">
+                <div class = "book-ISBN">
+                    <div class="isbn-tag">
+                        ISBN:
+                    </div>
+                    <div class="book-isbn-text">
+                        {{ item.isbn }}
+                    </div>
+
+                </div>
+                <div class ="book-Author">
+                    <div class="book-author-tag">
+                        Author:
+                    </div>
+                    <div class="book-author-text">
+                        {{ item.author }}
+                    </div>
+                </div>
+                <div class="book-publisher">
+                    <div class="book-publisher-tag">
+                        Publisher:
+                    </div>
+                    <div class="book-publisher-text">
+                        {{ item.publisher }}
+                    </div>
+                </div>
+                <div class="book-Date">
+                    <div class="book-date-tag">
+                        Date:
+                    </div>
+                    <div class="book-date-text">
+                        {{ item.date }}
+                    </div>
+                </div>
+                <div class="book-edition">
+                    <div class="book-edition-tag">
+                        Edition:
+                    </div>
+                    <div class="book-edition-text">
+                        {{ item.edition }}
+                    </div>
+                </div>
+                <div class="book-id">
+                    <div class="book-id-tag">
+                        ID:
+                    </div>
+                    <div class="book-id-text">
+                        {{ item.id }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-bottom">
+            <div class="holding-title">
+                Holdings
+            </div>
+            <div class="holdings-container">
+            {% for holding in item.holdings %}
+            <div class="holdings">
+                    <div class="holding-id">
+                        {{ holding.id }}
+                    </div>
+                    <div class="holding-type">
+                        {{ holding.holding_type }}
+                    </div>
+                    <div class="holding-user">
+                        {{ holding.user.username }}
+                    </div>
+
+                    {% if holding.user.username == username %}
+                    <div class = "holding-buttons">
+                        <a href={{ url_for('edit_holding', holding_id_num=holding.id) }}>edit</a>
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            </div>
+            </div>
+        </div>
+        <div class="user-side-container">
+            <text class="username-text">{{ item.user.username }}</text>
+            <img src={{ item.user.picture }} width="50" height="50">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+
+    <form action="{{ url_for('edit_book', id_num=book.id) }}" method="POST">
+        <input type="text" name="title" value={{ book.title }}>
+        <input type="text" name="ISBN" value={{ book.ISBN }}>
+        <input type="text" name="author" value= {{ book.author }}>
+        <input type="text" name="publisher" value={{ book.publisher }}>
+        <input type="text" name="edition" value={{ book.edition }}>
+        <input type="text" name="date" value={{ book.date }}>
+        <input name="Submit" type="submit"/>
+    </form>

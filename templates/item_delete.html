@@ -1,0 +1,5 @@
+<form action="{{ url_for('delete_book', id_num=book.id) }}" method="POST">
+    Are you sure you want to delete {{ book.title }}
+    <input type ='hidden' name='delete_id' value={{ book.id }}>
+    <input name="Delete" type="submit">
+</form>

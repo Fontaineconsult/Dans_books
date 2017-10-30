@@ -1,0 +1,20 @@
+{% extends 'container.html' %}
+{% block top_interface %}
+
+<div class = "top-button-container">
+<div class="top-button">
+    <a href="{{ url_for('addbook')}}">Add Book</a>
+</div>
+<div class="top-button">
+        <a href="{{ url_for('search_book')}}">Search Book</a>
+</div>
+</div>
+<div class="image-banner">
+    <img src="https://www.oliversacks.com/os/wp-content/uploads/2015/04/DSC_6976-opt.jpg">
+</div>
+<div class = "main-content-container">
+    {% for item in books %}
+    {% include 'item_views.html' %}
+    {% endfor %}
+</div>
+{% endblock %}
