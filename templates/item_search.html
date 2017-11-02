@@ -1,8 +1,10 @@
 {% extends 'container.html' %}
 {% block top_interface %}
+<div class="holding-edit-container">
 <form method="GET" action="{{ url_for('pagified_items') }}">
-    <input name="search_title" type="text">
-    <input name="search_isbn" type="text">
+    <input name="search_title" type="text" placeholder="search title">
+    <input name="search_isbn" type="text" placeholder="search isbn">
     <input type="submit" name="Search" value="SEARCH!">
 </form>
+</div>
 {% endblock %}

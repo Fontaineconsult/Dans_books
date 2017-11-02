@@ -12,7 +12,8 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-from cgi import escape
+
+
 import  requests
 
 CLIENT_ID = json.loads(
@@ -153,10 +154,10 @@ def showLogin():
     if 'username' not in login_session:
         state= ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
         login_session['state'] = state
-        return render_template('login.html', STATE=state, username='Home')
+        return render_template('login.html', STATE=state, username=None)
     else:
         flash('Already logged in. Logging Out')
-        redirect(url_for('logout'))
+        return redirect(url_for('logout'))
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -282,10 +283,27 @@ def gdisconnect():
         return response
 
 @app.route('/')
-@app.route('/main/')
-def mainpage():
-    books = session.query(Book).order_by(desc(Book.id)).limit(10)
-    return render_template('main.html', books=books, username=username())
+def redirect_to_main():
+    return redirect(url_for('mainpage'))
+
+@app.route('/main/', defaults={'page': 1})
+@app.route('/main/<int:page>')
+def mainpage(page):
+    page, per_page, offset = get_page_args()
+    count = session.query(Book).count()
+    books = session.query(Book).order_by(desc(Book.id)).offset(offset).limit(per_page)
+
+    pagination = Pagination(page=page,
+                            total=count,
+                            record_name='books',
+                            format_total=True)
+
+    return render_template('main.html',
+                           books=books,
+                           pagination=pagination,
+                           username=username(),
+                           count=count,
+                           homebuttonoff=True)
 
 
 @app.route('/listall')
@@ -335,7 +353,7 @@ def pagified_items(page):
 
 @app.route('/book/search/')
 def search_book():
-    return render_template('item_search.html')
+    return render_template('item_search.html', username=username())
 
 @app.route('/book/search/result')
 def search_result():
@@ -399,17 +417,65 @@ def view_book(id_num):
                                   added_by = request.form['added_by'])
             session.add(add_holding)
             session.commit()
-            return render_template('book_view.html', item=book, username=login_session['username'])
+            return render_template('book_view.html', item=book, username=username())
         else:
-            return render_template('book_view.html', item=book, username =login_session['username'])
+            return render_template('book_view.html', item=book, username=username())
     else:
         flash("Item not found")
         return redirect(url_for('mainpage'))
+
+@app.route('/api/book/<int:id_num>/')
+def jsonify_book(id_num):
+    book = get_book(id_num)
+    holding_list_json = {}
+
+    for x in book.holdings:
+
+        holding_json = {}
+        holding_json['holding_type'] = x.holding_type
+        holding_json['holding_user'] = x.user.username
+        holding_json['holding_notes'] = x.holding_notes
+        holding_list_json.update({x.id:holding_json})
+
+    return jsonify({'username': book.user.username,
+                    'user photo': book.user.picture,
+                    'book title': book.title,
+                    'book ISBN': book.isbn,
+                    'book author': book.author,
+                    'book publisher': book.publisher,
+                    'book edition': book.edition,
+                    'book date': book.date,
+                    'book-holdings': holding_list_json})
+
 
 @app.route('/book/isbn/<int:isbn>/')
 def view_book_isbn(isbn):
     items = session.query(Book).filter_by(isbn=isbn).all()
     return render_template('item_views.html', books=items)
+
+@app.route('/api/book/isbn/<int:isbn>/')
+def jsonify_isbn(isbn):
+    book = session.query(Book).filter_by(isbn=isbn).one()
+
+    holding_list_json = {}
+
+    for x in book.holdings:
+
+        holding_json = {}
+        holding_json['holding_type'] = x.holding_type
+        holding_json['holding_user'] = x.user.username
+        holding_json['holding_notes'] = x.holding_notes
+        holding_list_json.update({x.id:holding_json})
+
+    return jsonify({'username': book.user.username,
+                    'user photo': book.user.picture,
+                    'book title': book.title,
+                    'book ISBN': book.isbn,
+                    'book author': book.author,
+                    'book publisher': book.publisher,
+                    'book edition': book.edition,
+                    'book date': book.date,
+                    'book-holdings': holding_list_json})
 
 @app.route('/book/<int:id_num>/delete', methods=['GET', 'POST'])
 def delete_book(id_num):
@@ -453,7 +519,7 @@ def edit_book(id_num):
                 return redirect(url_for('mainpage'))
         else:
             if book_to_edit:
-                return render_template('item_edit.html', book=book_to_edit)
+                return render_template('item_edit.html', book=book_to_edit, username=username())
             else:
                 flash("Item not found")
                 return redirect(url_for('mainpage'))
@@ -492,7 +558,32 @@ def edit_holding(holding_id_num):
         flash('Action Denied')
         return redirect(url_for('mainpage'))
 
-
+@app.route('/book/<int:id_num>/holding_add', methods=['GET', 'POST'])
+def add_holding(id_num):
+    if username() is not None:
+        book = session.query(Book).filter_by(id=id_num).first()
+        if request.method == 'POST':
+            post_email = request.form['current_user']
+            if post_email == login_session['email']:
+                user_id = getUserID(post_email)
+                holding_type = request.form['holding_type']
+                holding_notes = request.form['holding_notes']
+                add_holding = Holding(holding_type=holding_type,
+                                      holding_notes=holding_notes,
+                                      added_by=user_id,
+                                      book_id=id_num)
+                session.add(add_holding)
+                session.commit()
+                flash('Successfully Added New Holding')
+                return redirect(url_for('mainpage'))
+            else:
+                flash("Action Denied")
+                return redirect(url_for('mainpage'))
+        else:
+            return render_template('add_holding.html',
+                               username=username(),
+                               email=login_session['email'],
+                               book=book)
 
 
 if __name__ == '__main__':

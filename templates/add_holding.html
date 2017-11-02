@@ -1,0 +1,28 @@
+{% extends "container.html" %}
+{% block top_interface %}
+<div class="holding-edit-container">
+<div class="book-info">
+    <span>Book Title: {{book.title}}</span>
+    <br>
+    <span>Book Owner: {{book.user.username}}</span>
+    <br>
+</div>
+<div class="user-add">
+    <form method="post">
+        <select action="{{ url_for('add_holding', id_num=book.id) }}" name="holding_type">
+            <option value="PDF">PDF</option>
+            <option value="MS Word">MS Word</option>
+            <option value="Physical Copy">Physical Copy</option>
+            <option value="MOBI">MOBI</option>
+            <option value="DAISY">DAISY</option>
+            <option value="Braille">Braille</option>
+            <option value="Epub">Epub</option>
+        </select>
+        <input type="text" name="holding_notes" placeholder="Holding Notes" >
+        <input type="hidden" name="current_user" value={{ email }}>
+        <input name="Submit" type="submit"/>
+    </form>
+    <br>
+</div>
+</div>
+{% endblock %}

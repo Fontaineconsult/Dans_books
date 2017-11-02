@@ -2,8 +2,8 @@
 {% block top_interface %}
 
 {{ pagination.info }}
-{{ pagination.links }}
-<table>
+<div class="paginated-links">{{ pagination.links }}</div>
+<table class="paginated-search-table">
     <thead>
         <tr>
             <th>#</th>
@@ -11,16 +11,14 @@
             <th>ISBN</th>
             <th>Author</th>
             <th>Publisher</th>
-            <th>Date</th>
+            <th>Date</th> 
             <th>Edition</th>
             <th>User</th>
-            <th>Image</th>
             <th>Holding</th>
         </tr>
     </thead>
     <tbody>
 {% for item in books %}
-
 <tr>
     <td>{{ loop.index }}</td>
     <td><a href={{ url_for('view_book', id_num=item.id) }}> {{item.title}} </a></td>
@@ -30,7 +28,6 @@
     <td>{{ item.date }}</td>
     <td>{{ item.edition }}</td>
     <td>{{ item.user.username }}</td>
-    <td><img src={{ item.user.picture }} width="50" height="50"></td>
     {% set stringcat = [] %}
     {% for holding in item.holdings %}
     {% do stringcat.append(holding.holding_type) %}
@@ -45,5 +42,5 @@
 </thead>
 
 </table>
-{{ pagination.links }}
+<div class="paginated-links">{{ pagination.links }}</div>
 {% endblock %}

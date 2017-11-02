@@ -64,7 +64,8 @@
             </div>
             <div class="content-bottom">
             <div class="holding-title">
-                Holdings
+                <span>Holdings</span>
+                <span class="holdings-add-button"><a href={{ url_for('add_holding', id_num=item.id) }}>+</a></span>
             </div>
             <div class="holdings-container">
             {% for holding in item.holdings %}
@@ -74,6 +75,9 @@
                     </div>
                     <div class="holding-type">
                         {{ holding.holding_type }}
+                    </div>
+                    <div class="holding-user">
+                        {{ holding.holding_notes }}
                     </div>
                     <div class="holding-user">
                         {{ holding.user.username }}

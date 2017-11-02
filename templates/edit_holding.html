@@ -1,11 +1,22 @@
-    {{ holding.book.title }}
-    {{ holding.book.isbn }}
-    {{ holding.book.user.username }}
-
-    {{ holding.user.username }}
+{% extends 'container.html' %}
+{% block top_interface %}
+<div class="holding-edit-container">
+    <div class="holding-book-info">
+        <span>Book Title: {{ holding.book.title }}</span>
+        <br>
+        <span>Book ISBN: {{ holding.book.isbn }}</span>
+        <br>
+        <span>Book Owner: {{ holding.book.user.username }}</span>
+        <br>
+        <span>Holding Ownser: {{ holding.user.username }}</span>
+        <br>
+    </div>
     <form action="{{ url_for('edit_holding', holding_id_num=holding.id) }}" method="POST">
         <input type="text" name="holding_type" value={{ holding.holding_type }}>
         <input type="text" name="holding_notes" value={{ holding.holding_notes }}>
         <input name="edit_del_submit" type="submit" value="Edit">
-        <input name="edit_del_submit" type="submit" value="Delete">
+        <button name="edit_del_submit" type="submit" value="Delete"
+                onclick="return confirm('Sure you want to delete?');" >Delete</button>
     </form>
+</div>
+{% endblock %}

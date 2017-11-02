@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css')}}">
+    <link rel="icon" href="http://sharondrewmorgen.com/wp-content/uploads/2010/01/favicon.png"
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Hammersmith+One" rel="stylesheet">
     {% block login_head %}
     {% endblock %}
     <title>Dans Books</title>
@@ -26,13 +29,14 @@
                 {% endif %}
                 {% endwith %}
             </div>
+            <div class="home-button">
+                {% if not homebuttonoff %}
+                <a href="{{ url_for('mainpage') }}">Home</a>
+                {% endif %}
+            </div>
             <div class="login-container">
                 {% if username %}
-                    {% if username == 'Home' %}
-                        <a href="{{ url_for('mainpage') }}">Home</a>
-                    {% else %}
-                        <a href="{{ url_for('logout') }}">Logout</a>
-                    {% endif %}
+                    <a href="{{ url_for('logout') }}">Logout</a>
                 {% else %}
                     <a href="{{ url_for('showLogin')}}">Login</a>
                 {% endif %}

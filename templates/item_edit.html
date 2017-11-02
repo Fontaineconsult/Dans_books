@@ -1,10 +1,31 @@
-
-    <form action="{{ url_for('edit_book', id_num=book.id) }}" method="POST">
-        <input type="text" name="title" value={{ book.title }}>
-        <input type="text" name="ISBN" value={{ book.ISBN }}>
-        <input type="text" name="author" value= {{ book.author }}>
-        <input type="text" name="publisher" value={{ book.publisher }}>
-        <input type="text" name="edition" value={{ book.edition }}>
-        <input type="text" name="date" value={{ book.date }}>
+{% extends "container.html" %}
+{% block top_interface %}
+    <div class="book-owner">
+        <span>{{ book.user.username }}</span>
+        <img src="{{ book.user.picture }}" width="50px" height="50px">
+    </div>
+    <form class="book-edit-form" action="{{ url_for('edit_book', id_num=book.id) }}" method="POST">
+        <label for="title">Book Title</label>
+        <input class="book-input" id="title" type="text" name="title" value={{ book.title }}>
+        <br>
+        <label for="Book ISBN">ISBN</label>
+        <input class="book-input" id="Book ISBN" type="text" name="ISBN" value={{ book.ISBN }}>
+        <br>
+        <label for="author">Author</label>
+        <input class="book-input" id="author" type="text" name="author" value= {{ book.author }}>
+        <br>
+        <label for="publisher">Publisher</label>
+        <input class="book-input" id="publisher" type="text" name="publisher" value={{ book.publisher }}>
+        <br>
+        <label for="edition">Edition</label>
+        <input class="book-input" id="edition" type="text" name="edition" value={{ book.edition }}>
+        <br>
+        <label for="date">Date</label>
+        <input class="book-input" id="date" type="text" name="date" value={{ book.date }}>
+        <br>
         <input name="Submit" type="submit"/>
     </form>
+    <form action="{{url_for('mainpage')}}" class="book-edit-form">
+        <input type="submit" value="Cancel" />
+    </form>
+{% endblock %}

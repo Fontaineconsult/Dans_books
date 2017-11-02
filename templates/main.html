@@ -1,20 +1,31 @@
 {% extends 'container.html' %}
 {% block top_interface %}
-
+<div class="page-title-container">
+    <span class="page-title">Dans Books</span>
+</div>
+<div class = "content-outline-container">
 <div class = "top-button-container">
-<div class="top-button">
+    <div class="top-button">
     <a href="{{ url_for('addbook')}}">Add Book</a>
 </div>
-<div class="top-button">
+    <div class="top-button">
         <a href="{{ url_for('search_book')}}">Search Book</a>
 </div>
+    <div class="book-count">
+        <div class="count-text-container">
+            <span class="count-text">{{ count }}</span>
+            <span class="count-tag">books in this library</span>
+        </div>
+    </div>
 </div>
 <div class="image-banner">
     <img src="https://www.oliversacks.com/os/wp-content/uploads/2015/04/DSC_6976-opt.jpg">
 </div>
 <div class = "main-content-container">
+    <div class="paginated-links">{{ pagination.links }}</div>
     {% for item in books %}
     {% include 'item_views.html' %}
     {% endfor %}
+</div>
 </div>
 {% endblock %}
