@@ -12,15 +12,10 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-
-
-import  requests
+import requests
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
-
-
-
 
 app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.do')
@@ -29,24 +24,26 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-def getUserID(email):
+
+def getuserid(email):
     try:
-        user = session.query(User).filter_by(email = email).first()
-        return  user.id
+        user = session.query(User).filter_by(email=email).first()
+        return user.id
     except exc.NoResultFound:
         return None
 
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id = user_id).one()
+
+def getuserinfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
-def createUser(login_session):
-    newUser = User(username = login_session['username'], email = login_session['email'],
-                   picture = login_session['picture'])
+def createuser(login_session):
+    newUser = User(username=login_session['username'], email=login_session['email'],
+                   picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email = login_session['email']).one()
+    user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
@@ -58,6 +55,7 @@ def get_book(id_num):
         print "Tried to get book: Not found"
         return None
 
+
 def get_holding(id_num):
     try:
         holding = session.query(Holding).filter_by(id=id_num).one()
@@ -65,6 +63,7 @@ def get_holding(id_num):
     except exc.NoResultFound:
         print "Tried to get holding: Not found"
         return None
+
 
 def check_object_owner(query_object):
     if query_object is not None:
@@ -80,15 +79,16 @@ def check_object_owner(query_object):
             return False
     return False
 
+
 def username():
     if 'username' in login_session:
         return login_session['username']
     else:
         return None
 
+
 @app.route('/logout/')
 def logout():
-
     if 'gplus_id' in login_session:
         return redirect((url_for('gdisconnect')))
     else:
@@ -98,7 +98,6 @@ def logout():
 
 @app.route('/add_user/', methods=['GET', 'POST'])
 def add_user():
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -106,16 +105,16 @@ def add_user():
         if username == "" or password == "" or email == "":
             flash("Missing item.")
             return redirect(url_for('add_user'))
-        user_check = session.query(User).filter_by(username = username).first()
-        email_check = session.query(User).filter_by(email = email).first()
+        user_check = session.query(User).filter_by(username=username).first()
+        email_check = session.query(User).filter_by(email=email).first()
         if user_check or email_check:
             print user_check
             flash("This username or email already exists")
             return redirect(url_for('add_user'))
 
-        user = User(username = username, email = email,
-                    picture = "http://camtech.must.ac.ug/wp-content/"
-                              "uploads/2013/11/default-pic.png")
+        user = User(username=username, email=email,
+                    picture="http://camtech.must.ac.ug/wp-content/"
+                            "uploads/2013/11/default-pic.png")
         user.hash_password(password)
         session.add(user)
         session.commit()
@@ -132,12 +131,11 @@ def add_user():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def showLogin():
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         try:
-            user = session.query(User).filter_by(username = username).one()
+            user = session.query(User).filter_by(username=username).one()
         except exc.NoResultFound:
             flash('User Not Found')
             return redirect(url_for('showLogin'))
@@ -152,12 +150,13 @@ def showLogin():
             flash('Username or Password Incorrect')
             return redirect(url_for('showLogin'))
     if 'username' not in login_session:
-        state= ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
         login_session['state'] = state
         return render_template('login.html', STATE=state, username=None)
     else:
         flash('Already logged in. Logging Out')
         return redirect(url_for('logout'))
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -229,8 +228,8 @@ def gconnect():
     user_check = getUserID(data['email'])
     print data
     if user_check is None:
-        guser_info = {'username':data['name'],'email':data['email'],
-                      'picture':data['picture']}
+        guser_info = {'username': data['name'], 'email': data['email'],
+                      'picture': data['picture']}
 
         user = getUserInfo(createUser(guser_info))
         login_session['username'] = user.username
@@ -252,6 +251,7 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -282,9 +282,11 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+
 @app.route('/')
 def redirect_to_main():
     return redirect(url_for('mainpage'))
+
 
 @app.route('/main/', defaults={'page': 1})
 @app.route('/main/<int:page>')
@@ -312,12 +314,12 @@ def listitems():
     print login_session.get('access_token')
     if 'username' not in login_session:
         login_session['username'] = None
-    return render_template('item_views.html', books=books, username =login_session['username'])
+    return render_template('item_views.html', books=books, username=login_session['username'])
+
 
 @app.route('/book/search/result/', defaults={'page': 1})
 @app.route('/book/', defaults={'page': 1})
 @app.route('/book/page/<int:page>')
-
 def pagified_items(page):
     page, per_page, offset = get_page_args()
 
@@ -343,17 +345,18 @@ def pagified_items(page):
                             total=count,
                             record_name='books',
                             format_total=True)
-    if 'username'  not in login_session:
+    if 'username' not in login_session:
         login_session['username'] = None
     return render_template('paginated.html',
                            books=books,
                            pagination=pagination,
-                           username =login_session['username'])
+                           username=login_session['username'])
 
 
 @app.route('/book/search/')
 def search_book():
     return render_template('item_search.html', username=username())
+
 
 @app.route('/book/search/result')
 def search_result():
@@ -364,7 +367,7 @@ def search_result():
         title_search = session.query(Book).filter(Book.title.like("%" + title_query + "%")).all()
         flash(str(len(title_search)) + " results found")
         if title_search:
-            return render_template('item_views.html', books = title_search)
+            return render_template('item_views.html', books=title_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
@@ -372,20 +375,21 @@ def search_result():
         isbn_search = session.query(Book).filter(Book.isbn.like("%" + isbn_query + "%")).all()
         flash(str(len(isbn_search)) + " results found")
         if isbn_query:
-            return render_template('item_views.html', books = isbn_search)
+            return render_template('item_views.html', books=isbn_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
     if title_query and isbn_query:
         multi_search = session.query(Book).filter_by(isbn=isbn_query, title=title_query).all()
         if multi_search:
-            return render_template('item_views.html', books = multi_search)
+            return render_template('item_views.html', books=multi_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
 
-@app.route('/addbook', methods=['GET','POST'])
-def  addbook():
+
+@app.route('/addbook', methods=['GET', 'POST'])
+def addbook():
     if 'username' in login_session:
         if request.method == 'POST':
             title = request.form['title']
@@ -394,27 +398,28 @@ def  addbook():
             publisher = request.form['publisher']
             edition = request.form['edition']
             date = request.form['date']
-            add_book = Book(isbn = isbn, title = title, author = author,
-                publisher = publisher, edition = edition, date=date,
-                            user_id = getUserID(login_session['email']))
+            add_book = Book(isbn=isbn, title=title, author=author,
+                            publisher=publisher, edition=edition, date=date,
+                            user_id=getUserID(login_session['email']))
             session.add(add_book)
             session.commit()
             return redirect((url_for('mainpage')))
         else:
             return render_template('add_book.html', username=username())
     else:
-        response = make_response('User Not Found',300)
+        response = make_response('User Not Found', 300)
         response.headers['Content-Type'] = 'text/html'
         return redirect(url_for('showLogin'))
+
 
 @app.route('/book/<int:id_num>/', methods=['GET', 'POST'])
 def view_book(id_num):
     book = get_book(id_num)
     if book:
         if request.method == 'POST':
-            add_holding = Holding(holding_type = request.form['holding_type'],
-                                  holding_notes = request.form['holding_notes'],
-                                  added_by = request.form['added_by'])
+            add_holding = Holding(holding_type=request.form['holding_type'],
+                                  holding_notes=request.form['holding_notes'],
+                                  added_by=request.form['added_by'])
             session.add(add_holding)
             session.commit()
             return render_template('book_view.html', item=book, username=username())
@@ -424,18 +429,18 @@ def view_book(id_num):
         flash("Item not found")
         return redirect(url_for('mainpage'))
 
+
 @app.route('/api/book/<int:id_num>/')
 def jsonify_book(id_num):
     book = get_book(id_num)
     holding_list_json = {}
 
     for x in book.holdings:
-
         holding_json = {}
         holding_json['holding_type'] = x.holding_type
         holding_json['holding_user'] = x.user.username
         holding_json['holding_notes'] = x.holding_notes
-        holding_list_json.update({x.id:holding_json})
+        holding_list_json.update({x.id: holding_json})
 
     return jsonify({'username': book.user.username,
                     'user photo': book.user.picture,
@@ -453,6 +458,7 @@ def view_book_isbn(isbn):
     items = session.query(Book).filter_by(isbn=isbn).all()
     return render_template('item_views.html', books=items)
 
+
 @app.route('/api/book/isbn/<int:isbn>/')
 def jsonify_isbn(isbn):
     book = session.query(Book).filter_by(isbn=isbn).one()
@@ -460,12 +466,11 @@ def jsonify_isbn(isbn):
     holding_list_json = {}
 
     for x in book.holdings:
-
         holding_json = {}
         holding_json['holding_type'] = x.holding_type
         holding_json['holding_user'] = x.user.username
         holding_json['holding_notes'] = x.holding_notes
-        holding_list_json.update({x.id:holding_json})
+        holding_list_json.update({x.id: holding_json})
 
     return jsonify({'username': book.user.username,
                     'user photo': book.user.picture,
@@ -476,6 +481,7 @@ def jsonify_isbn(isbn):
                     'book edition': book.edition,
                     'book date': book.date,
                     'book-holdings': holding_list_json})
+
 
 @app.route('/book/<int:id_num>/delete', methods=['GET', 'POST'])
 def delete_book(id_num):
@@ -499,6 +505,7 @@ def delete_book(id_num):
     else:
         flash('Action Denied')
         return redirect(url_for('mainpage'))
+
 
 @app.route('/book/<int:id_num>/edit', methods=['GET', 'POST'])
 def edit_book(id_num):
@@ -526,6 +533,7 @@ def edit_book(id_num):
     else:
         flash("Action Denied")
         return redirect(url_for('mainpage'))
+
 
 @app.route('/holding/<int:holding_id_num>/edit', methods=['GET', 'POST'])
 def edit_holding(holding_id_num):
@@ -558,6 +566,7 @@ def edit_holding(holding_id_num):
         flash('Action Denied')
         return redirect(url_for('mainpage'))
 
+
 @app.route('/book/<int:id_num>/holding_add', methods=['GET', 'POST'])
 def add_holding(id_num):
     if username() is not None:
@@ -581,9 +590,9 @@ def add_holding(id_num):
                 return redirect(url_for('mainpage'))
         else:
             return render_template('add_holding.html',
-                               username=username(),
-                               email=login_session['email'],
-                               book=book)
+                                   username=username(),
+                                   email=login_session['email'],
+                                   book=book)
 
 
 if __name__ == '__main__':
