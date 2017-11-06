@@ -26,6 +26,7 @@ session = DBSession()
 
 
 def getuserid(email):
+    # Gets user ID from Email
     try:
         user = session.query(User).filter_by(email=email).first()
         return user.id
@@ -34,11 +35,13 @@ def getuserid(email):
 
 
 def getuserinfo(user_id):
+    # Gets full user record based on ID
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def createuser(login_session):
+    # Creates a new user and returns the new user ID
     newUser = User(username=login_session['username'], email=login_session['email'],
                    picture=login_session['picture'])
     session.add(newUser)
@@ -48,6 +51,7 @@ def createuser(login_session):
 
 
 def get_book(id_num):
+    # Gets book record by ID
     try:
         book = session.query(Book).filter_by(id=id_num).one()
         return book
@@ -57,6 +61,7 @@ def get_book(id_num):
 
 
 def get_holding(id_num):
+    # Gets holding record based on ID
     try:
         holding = session.query(Holding).filter_by(id=id_num).one()
         return holding
@@ -66,6 +71,7 @@ def get_holding(id_num):
 
 
 def check_object_owner(query_object):
+    # Compares book record username with current login_session username
     if query_object is not None:
         try:
             if query_object.user.username == login_session['username']:
@@ -81,6 +87,7 @@ def check_object_owner(query_object):
 
 
 def username():
+    # returns login_session username
     if 'username' in login_session:
         return login_session['username']
     else:
@@ -88,6 +95,7 @@ def username():
 
 
 @app.route('/logout/')
+#
 def logout():
     if 'gplus_id' in login_session:
         return redirect((url_for('gdisconnect')))
@@ -321,6 +329,7 @@ def listitems():
 @app.route('/book/', defaults={'page': 1})
 @app.route('/book/page/<int:page>')
 def pagified_items(page):
+    # search page is redirected here and results are pagified.
     page, per_page, offset = get_page_args()
 
     title_query = request.args.get('search_title')

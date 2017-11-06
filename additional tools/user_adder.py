@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Book, User
-import csv
 
-engine = create_engine('sqlite:///books.db')
+
+engine = create_engine('sqlite:///C:\\Users\\913678186\\Box Sync\\'
+                       'Udacity_Nanodegree\\Item Catelogue Project\\books.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -20,7 +21,10 @@ def edit_user_email(search_email, new_email ):
     user.email = new_email
     session.commit()
 
-
+def edit_user_name(id, name):
+    user = session.query(User).filter_by(id = id).one()
+    user.username = name
+    session.commit()
 
 def view_user_data():
     users = session.query(User).all()
@@ -32,4 +36,4 @@ def view_user_data():
         print "email: %s" % user.email
         print "P_hash: %s" % user.password_hash
 
-view_user_data()
+edit_user_email('Dudelovesdick@yourmom.com', "123@abc.xyz")
