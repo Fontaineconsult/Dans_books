@@ -126,8 +126,8 @@ def add_user():
         user.hash_password(password)
         session.add(user)
         session.commit()
-        user_id = getUserID(email)
-        user_info = getUserInfo(user_id)
+        user_id = getuserid(email)
+        user_info = getuserinfo(user_id)
         login_session['username'] = user_info.username
         login_session['picture'] = user_info.picture
         login_session['email'] = user_info.email
@@ -233,18 +233,18 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-    user_check = getUserID(data['email'])
+    user_check = getuserid(data['email'])
     print data
     if user_check is None:
         guser_info = {'username': data['name'], 'email': data['email'],
                       'picture': data['picture']}
 
-        user = getUserInfo(createUser(guser_info))
+        user = getuserinfo(createuser(guser_info))
         login_session['username'] = user.username
         login_session['picture'] = user.picture
         login_session['email'] = user.email
     else:
-        user = getUserInfo(user_check)
+        user = getuserinfo(user_check)
         login_session['username'] = user.username
         login_session['picture'] = user.picture
         login_session['email'] = user.email
@@ -409,7 +409,7 @@ def addbook():
             date = request.form['date']
             add_book = Book(isbn=isbn, title=title, author=author,
                             publisher=publisher, edition=edition, date=date,
-                            user_id=getUserID(login_session['email']))
+                            user_id=getuserid(login_session['email']))
             session.add(add_book)
             session.commit()
             return redirect((url_for('mainpage')))
@@ -583,7 +583,7 @@ def add_holding(id_num):
         if request.method == 'POST':
             post_email = request.form['current_user']
             if post_email == login_session['email']:
-                user_id = getUserID(post_email)
+                user_id = getuserid(post_email)
                 holding_type = request.form['holding_type']
                 holding_notes = request.form['holding_notes']
                 add_holding = Holding(holding_type=holding_type,
@@ -602,7 +602,9 @@ def add_holding(id_num):
                                    username=username(),
                                    email=login_session['email'],
                                    book=book)
-
+    else:
+        flash('Action Denied')
+        return redirect(url_for('mainpage'))
 
 if __name__ == '__main__':
     app.secret_key = "Super Secret Key"

@@ -65,7 +65,9 @@
             <div class="content-bottom">
             <div class="holding-title">
                 <span>Holdings</span>
+                {% if username %}
                 <span class="holdings-add-button"><a href={{ url_for('add_holding', id_num=item.id) }}>+</a></span>
+                {% endif %}
             </div>
             <div class="holdings-container">
             {% for holding in item.holdings %}
