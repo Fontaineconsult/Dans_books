@@ -7,7 +7,8 @@ from models import Base, Book, User, Holding
 from flask import session as login_session
 from flask import make_response, Blueprint
 from flask_paginate import Pagination, get_page_parameter, get_page_args
-import random, string
+import random
+import string
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -42,7 +43,8 @@ def getuserinfo(user_id):
 
 def createuser(login_session):
     # Creates a new user and returns the new user ID
-    newUser = User(username=login_session['username'], email=login_session['email'],
+    newUser = User(username=login_session['username'],
+                   email=login_session['email'],
                    picture=login_session['picture'])
     session.add(newUser)
     session.commit()
@@ -158,7 +160,8 @@ def showLogin():
             flash('Username or Password Incorrect')
             return redirect(url_for('showLogin'))
     if 'username' not in login_session:
-        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        state = ''.join(random.choice(
+            string.ascii_uppercase + string.digits) for x in xrange(32))
         login_session['state'] = state
         return render_template('login.html', STATE=state, username=None)
     else:
@@ -217,8 +220,10 @@ def gconnect():
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
-    if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
+    if stored_access_token is not None\
+            and gplus_id == stored_gplus_id:
+        response = make_response(json.dumps(
+            'Current user is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -255,7 +260,9 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius:' \
+              ' 150px;-webkit-border-radius: 150px;-moz-border-radius:' \
+              ' 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -266,13 +273,15 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps(
+            'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'\
+          % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -286,7 +295,8 @@ def gdisconnect():
         flash("Successfully Logged Out")
         return redirect(url_for('mainpage'))
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(json.dumps(
+            'Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -301,7 +311,8 @@ def redirect_to_main():
 def mainpage(page):
     page, per_page, offset = get_page_args()
     count = session.query(Book).count()
-    books = session.query(Book).order_by(desc(Book.id)).offset(offset).limit(per_page)
+    books = session.query(Book).order_by(desc(Book.id)).\
+        offset(offset).limit(per_page)
 
     pagination = Pagination(page=page,
                             total=count,
@@ -318,11 +329,14 @@ def mainpage(page):
 
 @app.route('/listall')
 def listitems():
-    books = session.query(Book).join(Book.holdings).order_by(desc(Book.id)).all()
+    books = session.query(Book).join(Book.holdings).\
+        order_by(desc(Book.id)).all()
     print login_session.get('access_token')
     if 'username' not in login_session:
         login_session['username'] = None
-    return render_template('item_views.html', books=books, username=login_session['username'])
+    return render_template('item_views.html',
+                           books=books,
+                           username=login_session['username'])
 
 
 @app.route('/book/search/result/', defaults={'page': 1})
@@ -336,18 +350,31 @@ def pagified_items(page):
     isbn_query = request.args.get('search_isbn')
     if title_query or isbn_query:
         if title_query:
-            count = session.query(Book).filter(Book.title.like("%" + title_query + "%")).count()
-            books = session.query(Book).filter(Book.title.like("%" + title_query + "%")).offset(offset).limit(per_page)
+            count = session.query(Book).\
+                filter(Book.title.like("%" + title_query + "%")).count()
+            books = session.query(Book).\
+                filter(Book.title.like("%" + title_query + "%"))\
+                .offset(offset).limit(per_page)
         if isbn_query:
-            count = session.query(Book).filter(Book.isbn.like("%" + isbn_query + "%")).count()
-            books = session.query(Book).filter(Book.isbn.like("%" + isbn_query + "%")).offset(offset).limit(per_page)
+            count = session.query(Book).\
+                filter(Book.isbn.like("%" + isbn_query + "%")).count()
+            books = session.query(Book).\
+                filter(Book.isbn.like("%" + isbn_query + "%"))\
+                .offset(offset).limit(per_page)
         if isbn_query and title_query:
-            count = session.query(Book).filter_by(isbn=isbn_query, title=title_query).count()
-            books = session.query(Book).filter_by(isbn=isbn_query, title=title_query).offset(offset).limit(per_page)
+            count = session.query(Book).filter_by(
+                isbn=isbn_query,
+                title=title_query).count()
+            books = session.query(Book).filter_by(
+                isbn=isbn_query,
+                title=title_query).offset(offset).limit(per_page)
     else:
         count = session.query(Book).count()
-        books = session.query(Book).order_by(desc(Book.id)).offset(offset).limit(per_page)
-    if session.query(Book).order_by(desc(Book.id)).offset(offset).limit(per_page).count() == 0:
+        books = session.query(Book).\
+            order_by(desc(Book.id)).\
+            offset(offset).limit(per_page)
+    if session.query(Book).order_by(desc(Book.id))\
+            .offset(offset).limit(per_page).count() == 0:
         return redirect(url_for('mainpage'))
 
     pagination = Pagination(page=page,
@@ -364,7 +391,9 @@ def pagified_items(page):
 
 @app.route('/book/search/')
 def search_book():
-    return render_template('item_search.html', username=username())
+    return render_template(
+        'item_search.html',
+        username=username())
 
 
 @app.route('/book/search/result')
@@ -373,25 +402,36 @@ def search_result():
     isbn_query = request.args.get('search_isbn')
 
     if title_query:
-        title_search = session.query(Book).filter(Book.title.like("%" + title_query + "%")).all()
+        title_search = session.query(Book).\
+            filter(Book.title.like("%" + title_query + "%")).all()
         flash(str(len(title_search)) + " results found")
         if title_search:
-            return render_template('item_views.html', books=title_search)
+            return render_template(
+                'item_views.html',
+                books=title_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
     if isbn_query:
-        isbn_search = session.query(Book).filter(Book.isbn.like("%" + isbn_query + "%")).all()
+        isbn_search = session.query(Book).\
+            filter(Book.isbn.like("%" + isbn_query + "%")).all()
         flash(str(len(isbn_search)) + " results found")
         if isbn_query:
-            return render_template('item_views.html', books=isbn_search)
+            return render_template(
+                'item_views.html',
+                books=isbn_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
     if title_query and isbn_query:
-        multi_search = session.query(Book).filter_by(isbn=isbn_query, title=title_query).all()
+        multi_search = session.query(Book).\
+            filter_by(
+            isbn=isbn_query,
+            title=title_query).all()
         if multi_search:
-            return render_template('item_views.html', books=multi_search)
+            return render_template(
+                'item_views.html',
+                books=multi_search)
         else:
             flash('No Item Found')
             return render_template('item_views.html')
@@ -407,14 +447,20 @@ def addbook():
             publisher = request.form['publisher']
             edition = request.form['edition']
             date = request.form['date']
-            add_book = Book(isbn=isbn, title=title, author=author,
-                            publisher=publisher, edition=edition, date=date,
+            add_book = Book(isbn=isbn,
+                            title=title,
+                            author=author,
+                            publisher=publisher,
+                            edition=edition,
+                            date=date,
                             user_id=getuserid(login_session['email']))
             session.add(add_book)
             session.commit()
             return redirect((url_for('mainpage')))
         else:
-            return render_template('add_book.html', username=username())
+            return render_template(
+                'add_book.html',
+                username=username())
     else:
         response = make_response('User Not Found', 300)
         response.headers['Content-Type'] = 'text/html'
@@ -431,9 +477,15 @@ def view_book(id_num):
                                   added_by=request.form['added_by'])
             session.add(add_holding)
             session.commit()
-            return render_template('book_view.html', item=book, username=username())
+            return render_template(
+                'book_view.html',
+                item=book,
+                username=username())
         else:
-            return render_template('book_view.html', item=book, username=username())
+            return render_template(
+                'book_view.html',
+                item=book,
+                username=username())
     else:
         flash("Item not found")
         return redirect(url_for('mainpage'))
@@ -507,7 +559,9 @@ def delete_book(id_num):
                 return redirect(url_for('mainpage'))
         else:
             if book_to_delete:
-                return render_template('item_delete.html', book=book_to_delete)
+                return render_template(
+                    'item_delete.html',
+                    book=book_to_delete)
             else:
                 flash("Item not found")
                 return redirect(url_for('mainpage'))
@@ -535,7 +589,10 @@ def edit_book(id_num):
                 return redirect(url_for('mainpage'))
         else:
             if book_to_edit:
-                return render_template('item_edit.html', book=book_to_edit, username=username())
+                return render_template(
+                    'item_edit.html',
+                    book=book_to_edit,
+                    username=username())
             else:
                 flash("Item not found")
                 return redirect(url_for('mainpage'))
@@ -605,6 +662,7 @@ def add_holding(id_num):
     else:
         flash('Action Denied')
         return redirect(url_for('mainpage'))
+
 
 if __name__ == '__main__':
     app.secret_key = "Super Secret Key"
