@@ -9,7 +9,7 @@ This is a flask based website that provides CRUD functionality for a book holdin
 database used at a university. Users of the site are able to create their own user account or log in via Oauth2.0 using their google account. The site tracks a book holding catalogue. Users are able to add/edit/delete books and holdings as well as view other users books and holdings. 
 
 11/11/2017
-
+v1.0
 
 #### Requirements:
 
